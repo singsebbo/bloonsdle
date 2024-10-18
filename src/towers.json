@@ -1,0 +1,290 @@
+{
+  "Dart Monkey": {
+    "0-0-0": {
+      "Cost": [170, 200, 215, 240],
+      "Damage": 1,
+      "Pierce": 2,
+      "Attack Speed": 0.95,
+      "Range": 32,
+      "Camo Detection": false,
+      "Footprint": "Small",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Boomerang Monkey": {
+    "0-0-0": {
+      "Cost": [265, 315, 340, 380],
+      "Damage": 1,
+      "Pierce": 4,
+      "Attack Speed": 1.2,
+      "Range": 43,
+      "Camo Detection": false,
+      "Footprint": "Medium",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Bomb Shooter": {
+    "0-0-0": {
+      "Cost": [320, 375, 405, 450],
+      "Damage": 1,
+      "Pierce": 14,
+      "Attack Speed": 1.5,
+      "Range": 40,
+      "Camo Detection": false,
+      "Footprint": "Medium",
+      "Damage Type": "Explosion"
+    }
+  },
+  "Tack Shooter": {
+    "0-0-0": {
+      "Cost": [220, 260, 280, 310],
+      "Damage": 1,
+      "Pierce": 1,
+      "Attack Speed": 1.4,
+      "Range": 23,
+      "Camo Detection": false,
+      "Footprint": "Small",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Ice Monkey": {
+    "0-0-0": {
+      "Cost": [425, 500, 540, 600],
+      "Damage": 1,
+      "Pierce": 40,
+      "Attack Speed": 2.4,
+      "Range": 20,
+      "Camo Detection": false,
+      "Footprint": "Small",
+      "Damage Type": "Cold"
+    }
+  },
+  "Glue Gunner": {
+    "0-0-0": {
+      "Cost": [190, 225, 245, 270],
+      "Damage": 0,
+      "Pierce": 1,
+      "Attack Speed": 1,
+      "Range": 46,
+      "Camo Detection": false,
+      "Footprint": "Small",
+      "Damage Type": "Acid"
+    }
+  },
+  "Sniper Monkey": {
+    "0-0-0": {
+      "Cost": [300, 350, 380, 420],
+      "Damage": 2,
+      "Pierce": 1,
+      "Attack Speed": 1.59,
+      "Range": 20,
+      "Camo Detection": false,
+      "Footprint": "Small",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Monkey Sub": {
+    "0-0-0": {
+      "Cost": [275, 325, 350, 390],
+      "Damage": 1,
+      "Pierce": 2,
+      "Attack Speed": 0.75,
+      "Range": 42,
+      "Camo Detection": false,
+      "Footprint": "Medium",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Monkey Buccaneer": {
+    "0-0-0": {
+      "Cost": [340, 400, 430, 480],
+      "Damage": 1,
+      "Pierce": 4,
+      "Attack Speed": 1,
+      "Range": 60,
+      "Camo Detection": false,
+      "Footprint": "Moderately Large",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Monkey Ace": {
+    "0-0-0": {
+      "Cost": [680, 800, 865, 960],
+      "Damage": 1,
+      "Pierce": 5,
+      "Attack Speed": 1.68,
+      "Range": 22,
+      "Camo Detection": false,
+      "Footprint": "Very Large",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Heli Pilot": {
+    "0-0-0": {
+      "Cost": [1360, 1600, 1730, 1920],
+      "Damage": 1,
+      "Pierce": 3,
+      "Attack Speed": 0.57,
+      "Range": 22,
+      "Camo Detection": false,
+      "Footprint": "Very Large",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Mortar Monkey": {
+    "0-0-0": {
+      "Cost": [640, 750, 810, 900],
+      "Damage": 2,
+      "Pierce": 25,
+      "Attack Speed": 2,
+      "Range": 30,
+      "Camo Detection": false,
+      "Footprint": "Large",
+      "Damage Type": "Explosion"
+    }
+  },
+  "Dartling Gunner": {
+    "0-0-0": {
+      "Cost": [720, 850, 920, 1020],
+      "Damage": 1,
+      "Pierce": 1,
+      "Attack Speed": 0.2,
+      "Range": 20,
+      "Camo Detection": false,
+      "Footprint": "Medium",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Wizard Monkey": {
+    "0-0-0": {
+      "Cost": [275, 325, 350, 390],
+      "Damage": 1,
+      "Pierce": 3,
+      "Attack Speed": 1.1,
+      "Range": 40,
+      "Camo Detection": false,
+      "Footprint": "Medium",
+      "Damage Type": "Energy"
+    }
+  },
+  "Super Monkey": {
+    "0-0-0": {
+      "Cost": [2125, 2500, 2700, 3000],
+      "Damage": 1,
+      "Pierce": 1,
+      "Attack Speed": 0.045,
+      "Range": 50,
+      "Camo Detection": false,
+      "Footprint": "Very Large",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Ninja Monkey": {
+    "0-0-0": {
+      "Cost": [340, 400, 430, 480],
+      "Damage": 1,
+      "Pierce": 2,
+      "Attack Speed": 0.62,
+      "Range": 40,
+      "Camo Detection": true,
+      "Footprint": "Small",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Alchemist": {
+    "0-0-0": {
+      "Cost": [470, 550, 595, 660],
+      "Damage": 1,
+      "Pierce": 15,
+      "Attack Speed": 2,
+      "Range": 45,
+      "Camo Detection": false,
+      "Footprint": "Small",
+      "Damage Type": "Acid"
+    }
+  },
+  "Druid": {
+    "0-0-0": {
+      "Cost": [340, 400, 430, 480],
+      "Damage": 1,
+      "Pierce": 1,
+      "Attack Speed": 1.1,
+      "Range": 35,
+      "Camo Detection": false,
+      "Footprint": "Medium",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Mermonkey": {
+    "0-0-0": {
+      "Cost": [405, 475, 515, 570],
+      "Damage": "0-2",
+      "Pierce": "2-3",
+      "Attack Speed": 1.2,
+      "Range": "28-35",
+      "Camo Detection": false,
+      "Footprint": "Moderately Large",
+      "Damage Type": "Normal/Shatter"
+    }
+  },
+  "Banana Farm": {
+    "0-0-0": {
+      "Cost": [1060, 1250, 1350, 1500],
+      "Damage": "N/A",
+      "Pierce": "N/A",
+      "Attack Speed": "N/A",
+      "Range": 40,
+      "Camo Detection": false,
+      "Footprint": "Very Large",
+      "Damage Type": "Passive"
+    }
+  },
+  "Spike Factory": {
+    "0-0-0": {
+      "Cost": [850, 1000, 1080, 1200],
+      "Damage": 1,
+      "Pierce": 5,
+      "Attack Speed": 1.75,
+      "Range": 34,
+      "Camo Detection": true,
+      "Footprint": "Moderately Large",
+      "Damage Type": "Passive"
+    }
+  },
+  "Monkey Village": {
+    "0-0-0": {
+      "Cost": [1020, 1200, 1295, 1470],
+      "Damage": "N/A",
+      "Pierce": "N/A",
+      "Attack Speed": "N/A",
+      "Range": 40,
+      "Camo Detection": false,
+      "Footprint": "Very Large",
+      "Damage Type": "Passive"
+    }
+  },
+  "Engineer Monkey": {
+    "0-0-0": {
+      "Cost": [300, 350, 380, 420],
+      "Damage": 1,
+      "Pierce": 3,
+      "Attack Speed": 0.7,
+      "Range": 40,
+      "Camo Detection": false,
+      "Footprint": "Medium",
+      "Damage Type": "Sharp"
+    }
+  },
+  "Beast Handler": {
+    "0-0-0": {
+      "Cost": [210, 250, 270, 300],
+      "Damage": 1,
+      "Pierce": 4,
+      "Attack Speed": 1.4,
+      "Range": 20,
+      "Camo Detection": false,
+      "Footprint": "Medium",
+      "Damage Type": "Energy"
+    }
+  }
+}
