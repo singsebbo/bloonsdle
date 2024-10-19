@@ -1,0 +1,7 @@
+CREATE TABLE solution (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  challenge_date DATE UNIQUE NOT NULL,
+  base_tower TEXT NOT NULL,
+  crosspath TEXT NOT NULL,
+  num_solved INT DEFAULT 0
+);
