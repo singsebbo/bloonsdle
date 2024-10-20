@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import fs from "fs";
 import path from "path";
 import cron from "node-cron";
+import cors from "cors";
 
 dotenv.config();
 
@@ -12,6 +13,11 @@ const port = 3000;
 const pool: Pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
+const corsOptions = {
+  origin: "http://localhost:5173",
+};
+
+app.use(cors(corsOptions));
 
 function loadPossibleSolution(): any {
   const data = fs.readFileSync(path.join(__dirname, "towers.json"), "utf8");
@@ -59,7 +65,26 @@ cron.schedule(
   }
 );
 
+app.get("/daily", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT * FROM solution WHERE challenge_date = CURRENT_DATE`
+    );
+    if (result.rows.length === 0)
+      res.status(200).send({ message: "Daily challenge does not exist" });
+    const numSolved = result.rows[0].num_solved;
+    const baseTower = result.rows[0].base_tower;
+    const crosspath = result.rows[0].crosspath;
+    res.status(200).send({
+      tower: baseTower,
+      path: crosspath,
+      solved: numSolved,
+    });
+  } catch (err: unknown) {
+    res.sendStatus(500);
+  }
+});
+
 app.listen(port, (): void => {
   console.log(`App is listening on port ${port}`);
-  createNextDailyChallenge();
 });

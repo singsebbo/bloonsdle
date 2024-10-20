@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Suggestion, allSuggestions } from "./suggestion";
 import ResetSVG from "./assets/reset-svg";
 import CheckSVG from "./assets/check-svg";
@@ -12,6 +12,15 @@ interface TowerData {
 }
 
 function Game(): JSX.Element {
+  const [answerData, setAnswerData] = useState<TowerData>({
+    towerName: null,
+    towerImage: null,
+    topPath: null,
+    middlePath: null,
+    bottomPath: null
+  });
+  const [numSolved, setNumSolved] = useState<number>();
+  const [loading, setLoading] = useState<boolean>(true);
   const [towerData, setTowerData] = useState<TowerData>({
     towerName: null,
     towerImage: null,
@@ -20,6 +29,33 @@ function Game(): JSX.Element {
     bottomPath: null
   });
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+
+  async function getDailyChallenge() {
+    try {
+      const response = await fetch("http://localhost:3000/daily");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      const { tower, path, solved } = data;
+      setAnswerData({
+        towerName: tower,
+        towerImage: allSuggestions.find(item => item.towerName === tower && item.crosspath === path)!.image,
+        topPath: Number(path.split(['-'])[0]),
+        middlePath: Number(path.split(['-'])[1]),
+        bottomPath: Number(path.split(['-'])[2]),
+     });
+      setNumSolved(solved);
+    } catch (err: unknown) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect((): void => {
+    getDailyChallenge();
+  }, []);
 
   function handleTextChange(e: React.ChangeEvent<HTMLInputElement>): void {
     const value = e.target.value;
@@ -32,7 +68,6 @@ function Game(): JSX.Element {
       const filteredSuggestions = allSuggestions.filter((item) => 
         item.towerName.toLowerCase().includes(value.toLowerCase())
       );
-      console.log(filteredSuggestions);
       setSuggestions(filteredSuggestions);
     } else {
       setSuggestions([]);
@@ -70,7 +105,12 @@ function Game(): JSX.Element {
 
   return (
     <>
-      <main className="flex flex-col grow items-center mt-10">
+      <main className="flex flex-col grow items-center mt-10 relative">
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="w-16 h-16 border-4 border-gray-300 border-t-blue-500 border-t-4 rounded-full animate-spin"></div>
+          </div>
+        )}
         <div className="flex flex-col gap-2 items-center">
           <div className="flex items-center gap-2">
             <div
