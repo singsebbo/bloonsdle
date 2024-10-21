@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Suggestion, allSuggestions } from "./suggestion";
 import ResetSVG from "./assets/reset-svg";
 import CheckSVG from "./assets/check-svg";
+import towers from "./towers.json";
 
 interface TowerData {
   towerName: string | null,
@@ -12,6 +13,8 @@ interface TowerData {
 }
 
 function Game(): JSX.Element {
+  const allTowers = JSON.parse(JSON.stringify(towers));
+  const [difficulty, setDifficulty] = useState<number>(2);
   const [answerData, setAnswerData] = useState<TowerData>({
     towerName: null,
     towerImage: null,
@@ -29,6 +32,7 @@ function Game(): JSX.Element {
     bottomPath: null
   });
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [guesses, setGuesses] = useState<TowerData[]>([]);
 
   async function getDailyChallenge() {
     try {
@@ -63,7 +67,6 @@ function Game(): JSX.Element {
       ...towerData,
       towerName: value
     }));
-    console.log(value);
     if (value) {
       const filteredSuggestions = allSuggestions.filter((item) => 
         item.towerName.toLowerCase().includes(value.toLowerCase())
@@ -103,9 +106,23 @@ function Game(): JSX.Element {
     });
   }
 
+  function handleSubmit(): void {
+    if (towerData.towerImage === null) return;
+    setGuesses((prevGuesses) => {
+      return [...prevGuesses, towerData];
+    });
+    setTowerData({
+      towerName: null,
+      towerImage: null,
+      topPath: null,
+      middlePath: null,
+      bottomPath: null
+    });
+  }
+
   return (
     <>
-      <main className="flex flex-col grow items-center mt-10 relative">
+      <main className="flex flex-col grow mt-10 relative">
         {loading && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="w-16 h-16 border-4 border-gray-300 border-t-blue-500 border-t-4 rounded-full animate-spin"></div>
@@ -162,7 +179,10 @@ function Game(): JSX.Element {
                 <></>
               }
             </div>
-            <div className="cursor-pointer">
+            <div
+              className="cursor-pointer"
+              onClick={handleSubmit}
+            >
               <CheckSVG />
             </div>
           </div>
@@ -196,6 +216,76 @@ function Game(): JSX.Element {
               <option value={0}>0</option>
             </select>
           </div>
+          {guesses.length === 0 ?
+            <span>{numSolved} have found out the daily tower!</span>
+            :
+            <div className="flex ml-4 self-start md:self-center md:flex-col">
+              <ul
+                className="
+                  flex self-start md:ml-0 md:self-center flex-col md:flex-row font-mono text-xs border-2 p-2 border-slate-600
+                  rounded-md
+                "
+              >
+                <li className="flex items-center justify-center text-center h-14 md:h-auto md:w-14">Tower</li>
+                <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-20">Crosspath</li>
+                <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-12">Cost</li>
+                <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">Damage</li>
+                <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">Pierce</li>
+                <li className="flex items-center justify-center text-center h-10 md:h-auto mx-auto w-12 md:w-16">Attack Speed</li>
+                <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">Range</li>
+                <li className="flex items-center justify-center text-center h-10 w-12 mx-auto md:h-auto md:w-20">Camo Detection</li>
+                <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-20">Footprint</li>
+                <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">Damage Type</li>
+              </ul>
+              {guesses.map((guess, index) => (
+                <ul
+                  key={index}
+                  className="
+                    flex self-start ml-4 md:ml-0 md:self-center flex-col md:flex-row font-mono text-xs border-2 p-2 border-slate-600
+                    rounded-md md:mt-4 
+                  "
+                >
+                  <li className="flex items-center justify-center text-center h-14 md:h-auto md:w-14">
+                    <img 
+                      src={guess.towerImage!} alt={`${guess.topPath}-${guess.middlePath}-${guess.bottomPath} ${guess.towerName}`}
+                      className="h-14"
+                    />
+                  </li>
+                  <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-20">
+                    <span className={answerData.topPath === guess.topPath ? "text-green-500" : "text-red-600"}>{guess.topPath}</span>
+                    <span>-</span>
+                    <span className={answerData.middlePath === guess.middlePath ? "text-green-500" : "text-red-600"}>{guess.middlePath}</span>
+                    <span>-</span>
+                    <span className={answerData.bottomPath === guess.bottomPath ? "text-green-500" : "text-red-600"}>{guess.bottomPath}</span>
+                  </li>
+                  <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-12">
+                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Cost"][difficulty]}
+                  </li>
+                  <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
+                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Damage"]}
+                  </li>
+                  <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
+                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Pierce"]}
+                  </li>
+                  <li className="flex items-center justify-center text-center h-10 md:h-auto mx-auto w-12 md:w-16">
+                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Attack Speed"]}
+                  </li>
+                  <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
+                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Range"]}
+                  </li>
+                  <li className="flex items-center justify-center text-center h-10 w-12 mx-auto md:h-auto md:w-20">
+                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Camo Detection"].toString()}
+                  </li>
+                  <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-20">
+                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Footprint"]}
+                  </li>
+                  <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
+                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Damage Type"]}
+                  </li>
+                </ul>
+              ))}
+            </div>
+          }
         </div>
       </main>
     </>
