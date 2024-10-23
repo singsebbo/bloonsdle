@@ -1,6 +1,6 @@
-import Footer from "./footer"
-import Game from "./game"
-import Header from "./header"
+import Footer from "./elements/footer"
+import Game from "./pages/game"
+import Header from "./elements/header"
 
 function App(): JSX.Element {
   return (

@@ -1,4 +1,4 @@
-import dartMonkeyImage from "./assets/towerImages/dart-monkey.png";
+import dartMonkeyImage from "../assets/towerImages/dart-monkey.png";
 
 function Header(): JSX.Element {
   return (

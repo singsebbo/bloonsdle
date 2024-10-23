@@ -1,9 +1,9 @@
-import RepoSVG from "./assets/repo-svg";
+import RepoSVG from "../assets/repo-svg";
 
 function Footer(): JSX.Element {
   return (
     <>
-      <footer className="flex justify-center items-center h-10 mb-4">
+      <footer className="flex justify-center items-center h-10 my-4">
         <a 
           className="flex items-center gap-2 transition ease-in-out delay-50 hover:scale-110"
           href="https://github.com/singsebbo/bloonsdle"

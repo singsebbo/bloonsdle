@@ -2,6 +2,7 @@
   "Dart Monkey": {
     "0-0-0": {
       "Name": "Dart Monkey",
+      "Image": "dart-monkey.png",
       "Cost": [170, 200, 215, 240],
       "Damage": 1,
       "Pierce": 2,
@@ -15,6 +16,7 @@
   "Boomerang Monkey": {
     "0-0-0": {
       "Name": "Boomerang Monkey",
+      "Image": "boomerang-monkey.png",
       "Cost": [265, 315, 340, 380],
       "Damage": 1,
       "Pierce": 4,
@@ -28,6 +30,7 @@
   "Bomb Shooter": {
     "0-0-0": {
       "Name": "Bomb Shooter",
+      "Image": "bomb-shooter.png",
       "Cost": [320, 375, 405, 450],
       "Damage": 1,
       "Pierce": 14,
@@ -41,6 +44,7 @@
   "Tack Shooter": {
     "0-0-0": {
       "Name": "Tack Shooter",
+      "Image": "tack-shooter.png",
       "Cost": [220, 260, 280, 310],
       "Damage": 1,
       "Pierce": 1,
@@ -54,6 +58,7 @@
   "Ice Monkey": {
     "0-0-0": {
       "Name": "Ice Monkey",
+      "Image": "ice-monkey.png",
       "Cost": [425, 500, 540, 600],
       "Damage": 1,
       "Pierce": 40,
@@ -67,6 +72,7 @@
   "Glue Gunner": {
     "0-0-0": {
       "Name": "Glue Gunner",
+      "Image": "glue-gunner.png",
       "Cost": [190, 225, 245, 270],
       "Damage": 0,
       "Pierce": 1,
@@ -80,6 +86,7 @@
   "Sniper Monkey": {
     "0-0-0": {
       "Name": "Sniper Monkey",
+      "Image": "sniper-monkey.png",
       "Cost": [300, 350, 380, 420],
       "Damage": 2,
       "Pierce": 1,
@@ -93,6 +100,7 @@
   "Monkey Sub": {
     "0-0-0": {
       "Name": "Monkey Sub",
+      "Image": "monkey-sub.png",
       "Cost": [275, 325, 350, 390],
       "Damage": 1,
       "Pierce": 2,
@@ -106,6 +114,7 @@
   "Monkey Buccaneer": {
     "0-0-0": {
       "Name": "Monkey Buccaneer",
+      "Image": "monkey-buccaneer.png",
       "Cost": [340, 400, 430, 480],
       "Damage": 1,
       "Pierce": 4,
@@ -119,6 +128,7 @@
   "Monkey Ace": {
     "0-0-0": {
       "Name": "Monkey Ace",
+      "Image": "monkey-ace.png",
       "Cost": [680, 800, 865, 960],
       "Damage": 1,
       "Pierce": 5,
@@ -132,6 +142,7 @@
   "Heli Pilot": {
     "0-0-0": {
       "Name": "Heli Pilot",
+      "Image": "heli-pilot.png",
       "Cost": [1360, 1600, 1730, 1920],
       "Damage": 1,
       "Pierce": 3,
@@ -145,6 +156,7 @@
   "Mortar Monkey": {
     "0-0-0": {
       "Name": "Mortar Monkey",
+      "Image": "mortar-monkey.png",
       "Cost": [640, 750, 810, 900],
       "Damage": 2,
       "Pierce": 25,
@@ -158,6 +170,7 @@
   "Dartling Gunner": {
     "0-0-0": {
       "Name": "Dartling Gunner",
+      "Image": "dartling-gunner.png",
       "Cost": [720, 850, 920, 1020],
       "Damage": 1,
       "Pierce": 1,
@@ -171,6 +184,7 @@
   "Wizard Monkey": {
     "0-0-0": {
       "Name": "Wizard Monkey",
+      "Image": "wizard-monkey.png",
       "Cost": [275, 325, 350, 390],
       "Damage": 1,
       "Pierce": 3,
@@ -184,6 +198,7 @@
   "Super Monkey": {
     "0-0-0": {
       "Name": "Super Monkey",
+      "Image": "super-monkey.png",
       "Cost": [2125, 2500, 2700, 3000],
       "Damage": 1,
       "Pierce": 1,
@@ -197,6 +212,7 @@
   "Ninja Monkey": {
     "0-0-0": {
       "Name": "Ninja Monkey",
+      "Image": "ninja-monkey.png",
       "Cost": [340, 400, 430, 480],
       "Damage": 1,
       "Pierce": 2,
@@ -210,6 +226,7 @@
   "Alchemist": {
     "0-0-0": {
       "Name": "Alchemist",
+      "Image": "alchemist.png",
       "Cost": [470, 550, 595, 660],
       "Damage": 1,
       "Pierce": 15,
@@ -223,6 +240,7 @@
   "Druid": {
     "0-0-0": {
       "Name": "Druid",
+      "Image": "druid.png",
       "Cost": [340, 400, 430, 480],
       "Damage": 1,
       "Pierce": 1,
@@ -236,6 +254,7 @@
   "Mermonkey": {
     "0-0-0": {
       "Name": "Mermonkey",
+      "Image": "mermonkey.png",
       "Cost": [405, 475, 515, 570],
       "Damage": "0-2",
       "Pierce": "2-3",
@@ -249,10 +268,11 @@
   "Banana Farm": {
     "0-0-0": {
       "Name": "Banana Farm",
+      "Image": "banana-farm.png",
       "Cost": [1060, 1250, 1350, 1500],
-      "Damage": "N/A",
-      "Pierce": "N/A",
-      "Attack Speed": "N/A",
+      "Damage": null,
+      "Pierce": null,
+      "Attack Speed": null,
       "Range": 40,
       "Camo Detection": false,
       "Footprint": "Very Large",
@@ -262,6 +282,7 @@
   "Spike Factory": {
     "0-0-0": {
       "Name": "Spike Factory",
+      "Image": "spike-factory.png",
       "Cost": [850, 1000, 1080, 1200],
       "Damage": 1,
       "Pierce": 5,
@@ -275,10 +296,11 @@
   "Monkey Village": {
     "0-0-0": {
       "Name": "Monkey Village",
+      "Image": "monkey-village.png",
       "Cost": [1020, 1200, 1295, 1470],
-      "Damage": "N/A",
-      "Pierce": "N/A",
-      "Attack Speed": "N/A",
+      "Damage": null,
+      "Pierce": null,
+      "Attack Speed": null,
       "Range": 40,
       "Camo Detection": false,
       "Footprint": "Very Large",
@@ -288,6 +310,7 @@
   "Engineer Monkey": {
     "0-0-0": {
       "Name": "Engineer Monkey",
+      "Image": "engineer-monkey.png",
       "Cost": [300, 350, 380, 420],
       "Damage": 1,
       "Pierce": 3,
@@ -301,6 +324,7 @@
   "Beast Handler": {
     "0-0-0": {
       "Name": "Beast Handler",
+      "Image": "beast-handler.png",
       "Cost": [210, 250, 270, 300],
       "Damage": 1,
       "Pierce": 4,

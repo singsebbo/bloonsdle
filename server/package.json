@@ -2,9 +2,9 @@
   "name": "server",
   "version": "1.0.0",
   "description": "server for bloonsdle",
-  "main": "app.ts",
+  "main": "server.ts",
   "scripts": {
-    "start": "npx tsx src/app.ts"
+    "start": "npx tsx src/server.ts"
   },
   "author": "",
   "license": "ISC",

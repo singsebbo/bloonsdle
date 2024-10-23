@@ -1,57 +1,52 @@
 import { useState, useEffect } from "react";
-import { Suggestion, allSuggestions } from "./suggestion";
-import ResetSVG from "./assets/reset-svg";
-import CheckSVG from "./assets/check-svg";
-import towers from "./towers.json";
-
-interface TowerData {
-  towerName: string | null,
-  towerImage: string | null,
-  topPath: number | null,
-  middlePath: number | null,
-  bottomPath: number | null
-}
+import CheckSVG from "../assets/check-svg";
+import towers from "../data/towers.json";
+import ArrowSVG from "../assets/arrow-svg";
+import { loadTowerImages } from "../utils";
+import { Challenge, ChallengeResponse, Input, Tower, Towers } from "../interfaces";
+import Throbber from "../elements/throbber";
+import Reset from "../elements/reset";
+import { getTower } from "../utils";
 
 function Game(): JSX.Element {
-  const allTowers = JSON.parse(JSON.stringify(towers));
-  const [difficulty, setDifficulty] = useState<number>(2);
-  const [answerData, setAnswerData] = useState<TowerData>({
-    towerName: null,
-    towerImage: null,
-    topPath: null,
-    middlePath: null,
-    bottomPath: null
-  });
-  const [numSolved, setNumSolved] = useState<number>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [towerData, setTowerData] = useState<TowerData>({
-    towerName: null,
-    towerImage: null,
+  const [numSolved, setNumSolved] = useState<number | null>(null);
+  const [answerData, setAnswerData] = useState<Tower | null>(null);
+  // Used for the price of towers: Easy = 0, Medium = 1, Hard = 2, and Impoppable = 3
+  const [difficulty, setDifficulty] = useState<number>(2);
+  const [input, setInput] = useState<Input>({
+    textBox: null,
     topPath: null,
     middlePath: null,
     bottomPath: null
   });
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [guesses, setGuesses] = useState<TowerData[]>([]);
+  const [suggestions, setSuggestions] = useState<Tower[]>([]);
+  const [selectedTower, setSelectedTower] = useState<Tower | null>(null);
+  const allTowers: Towers = JSON.parse(JSON.stringify(towers));
+  const individualTowers: Tower[] = [];
+  const [towerImages, setTowerImages] = useState<{[key: string]: string}>({});
+  for (const baseTower in allTowers) {
+    const crosspaths = allTowers[baseTower];
+    for (const crosspath in crosspaths) {
+      const tower = getTower(baseTower, crosspath, allTowers);
+      individualTowers.push(tower);
+    }
+  }
+  const [guesses, setGuesses] = useState<Tower[]>([]);
 
-  async function getDailyChallenge() {
+  async function getDailyChallenge(): Promise<void> {
     try {
-      const response = await fetch("http://localhost:3000/daily");
+      const response: Response = await fetch("http://localhost:3000/api/daily");
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error with status: ${response.status}`);
       }
-      const data = await response.json();
-      const { tower, path, solved } = data;
-      setAnswerData({
-        towerName: tower,
-        towerImage: allSuggestions.find(item => item.towerName === tower && item.crosspath === path)!.image,
-        topPath: Number(path.split(['-'])[0]),
-        middlePath: Number(path.split(['-'])[1]),
-        bottomPath: Number(path.split(['-'])[2]),
-     });
-      setNumSolved(solved);
+      const data: ChallengeResponse = await response.json();
+      const challenge: Challenge = data.challenge;
+      const tower: Tower = getTower(challenge.baseTower, challenge.crosspath, allTowers);
+      setNumSolved(challenge.numSolved);
+      setAnswerData(tower);
     } catch (err: unknown) {
-      console.error(err);
+      console.error("Error while getting daily challenge", err);
     } finally {
       setLoading(false);
     }
@@ -59,18 +54,22 @@ function Game(): JSX.Element {
 
   useEffect((): void => {
     getDailyChallenge();
+    async function fetchImages(): Promise<void> {
+      const images = await loadTowerImages();
+      setTowerImages(images);
+    }
+    fetchImages();
   }, []);
 
   function handleTextChange(e: React.ChangeEvent<HTMLInputElement>): void {
-    const value = e.target.value;
-    setTowerData((towerData) => ({
-      ...towerData,
-      towerName: value
+    const value: string = e.target.value;
+    setInput((prevInput) => ({
+      ...prevInput,
+      textBox: value
     }));
     if (value) {
-      const filteredSuggestions = allSuggestions.filter((item) => 
-        item.towerName.toLowerCase().includes(value.toLowerCase())
-      );
+      const filteredSuggestions: Tower[] = individualTowers.filter(
+        (tower) => tower.Name.toLowerCase().includes(value.toLowerCase()));
       setSuggestions(filteredSuggestions);
     } else {
       setSuggestions([]);
@@ -79,70 +78,55 @@ function Game(): JSX.Element {
 
   function handleSelectionChange(e: React.ChangeEvent<HTMLSelectElement>): void {
     const { name, value } = e.target;
-    setTowerData((towerData) => ({
-      ...towerData,
+    setInput((prevInput) => ({
+      ...prevInput,
       [name]: value
     }));
   }
 
-  function handleSuggestionClick(suggestion: Suggestion): void {
-    setTowerData({
-      towerName: suggestion.towerName,
-      towerImage: suggestion.image,
-      topPath: Number(suggestion.crosspath.split('-')[0]),
-      middlePath: Number(suggestion.crosspath.split('-')[1]),
-      bottomPath: Number(suggestion.crosspath.split('-')[2])
+  function clearInput(): void {
+    setInput({
+      textBox: null,
+      topPath: null,
+      middlePath: null,
+      bottomPath: null
     });
+  }
+
+  function handleSuggestionClick(suggestion: Tower): void {
+    setSelectedTower(suggestion);
+    clearInput();
     setSuggestions([]);
   }
 
   function handleReset(): void {
-    setTowerData({
-      towerName: null,
-      towerImage: null,
-      topPath: null,
-      middlePath: null,
-      bottomPath: null
-    });
+    setSelectedTower(null);
+    clearInput();
+    setSuggestions([]);
   }
 
   function handleSubmit(): void {
-    if (towerData.towerImage === null) return;
+    if (selectedTower === null) return;
     setGuesses((prevGuesses) => {
-      return [...prevGuesses, towerData];
+      return [...prevGuesses, selectedTower];
     });
-    setTowerData({
-      towerName: null,
-      towerImage: null,
-      topPath: null,
-      middlePath: null,
-      bottomPath: null
-    });
+    setSelectedTower(null);
   }
 
   return (
     <>
       <main className="flex flex-col grow mt-10 relative">
-        {loading && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="w-16 h-16 border-4 border-gray-300 border-t-blue-500 border-t-4 rounded-full animate-spin"></div>
-          </div>
-        )}
-        <div className="flex flex-col gap-2 items-center">
+        {loading && <Throbber />}
+        <div className="flex flex-col grow gap-2 items-center">
           <div className="flex items-center gap-2">
-            <div
-              className="cursor-pointer"
-              onClick={handleReset}
-            >
-              <ResetSVG />
-            </div>
+            <Reset handleReset={handleReset} />
             <div className="relative">
-              {towerData.towerImage === null ?
+              {selectedTower === null ?
                 <input
                   type="text"
                   name="towerName"
                   placeholder="tower"
-                  value={towerData.towerName === null ? "" : towerData.towerName}
+                  value={input.textBox === null ? "" : input.textBox}
                   onChange={handleTextChange}
                   className="font-mono w-56 h-16 px-4 border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
                 />
@@ -151,11 +135,11 @@ function Game(): JSX.Element {
                   className="flex w-56 h-16 px-4 items-center h-16 gap-4 border-2 border-slate-600"
                 >
                   <img
-                    src={towerData.towerImage}
-                    alt={towerData.towerName!}
+                    src={towerImages[selectedTower.Image]}
+                    alt={selectedTower.Name}
                     className="w-10"
                   />
-                  <span className="font-mono">{towerData.towerName}</span>
+                  <span className="font-mono">{selectedTower.Name}</span>
                 </div>
               }
               {suggestions.length !== 0 ?
@@ -167,11 +151,11 @@ function Game(): JSX.Element {
                       onClick={() => handleSuggestionClick(suggestion)}
                     >
                       <img
-                        src={suggestion.image}
-                        alt={suggestion.towerName}
+                        src={towerImages[suggestion.Image]}
+                        alt={suggestion.Name}
                         className="w-10"
                       />
-                      <span className="font-mono">{suggestion.towerName}</span>
+                      <span className="font-mono">{suggestion.Name}</span>
                     </li>
                   ))}
                 </ul>
@@ -190,7 +174,7 @@ function Game(): JSX.Element {
           <div className="flex gap-2" id="crosspaths">
             <select
               name="topPath"
-              value={towerData.topPath === null ? "" : towerData.topPath}
+              value={input.topPath === null ? "" : input.topPath}
               onChange={handleSelectionChange}
               className="font-mono rounded-md border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
             >
@@ -199,7 +183,7 @@ function Game(): JSX.Element {
             </select>
             <select
               name="middlePath"
-              value={towerData.middlePath === null ? "" : towerData.middlePath}
+              value={input.middlePath === null ? "" : input.middlePath}
               onChange={handleSelectionChange}
               className="font-mono rounded-md border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
             >
@@ -208,7 +192,7 @@ function Game(): JSX.Element {
             </select>
             <select
               name="bottomPath"
-              value={towerData.bottomPath === null ? "" : towerData.bottomPath}
+              value={input.bottomPath === null ? "" : input.bottomPath}
               onChange={handleSelectionChange}
               className="font-mono rounded-md border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
             >
@@ -247,40 +231,57 @@ function Game(): JSX.Element {
                 >
                   <li className="flex items-center justify-center text-center h-14 md:h-auto md:w-14">
                     <img 
-                      src={guess.towerImage!} alt={`${guess.topPath}-${guess.middlePath}-${guess.bottomPath} ${guess.towerName}`}
+                      src={towerImages[guess.Image]} alt={`${guess.Crosspath} ${guess.Name}`}
                       className="h-14"
                     />
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-20">
-                    <span className={answerData.topPath === guess.topPath ? "text-green-500" : "text-red-600"}>{guess.topPath}</span>
+                    <span className={answerData?.["Top Path"] === guess["Top Path"] ? "text-green-500" : "text-red-600"}>{guess["Top Path"]}</span>
                     <span>-</span>
-                    <span className={answerData.middlePath === guess.middlePath ? "text-green-500" : "text-red-600"}>{guess.middlePath}</span>
+                    <span className={answerData?.["Middle Path"] === guess["Middle Path"] ? "text-green-500" : "text-red-600"}>{guess["Middle Path"]}</span>
                     <span>-</span>
-                    <span className={answerData.bottomPath === guess.bottomPath ? "text-green-500" : "text-red-600"}>{guess.bottomPath}</span>
+                    <span className={answerData?.["Bottom Path"] === guess["Bottom Path"] ? "text-green-500" : "text-red-600"}>{guess["Bottom Path"]}</span>
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-12">
-                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Cost"][difficulty]}
+                    <span className={guess.Cost[difficulty] === answerData?.Cost[difficulty] ? "text-green-500" : "text-red-600"}>
+                      {guess.Cost[difficulty]}
+                    </span>
+                    {guess.Cost != answerData!.Cost ?
+                      <span className={guess.Cost[difficulty] > answerData!.Cost[difficulty] ? "rotate-180" : ""}>
+                        <ArrowSVG />
+                      </span>
+                      :
+                      <></>
+                    }
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
-                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Damage"]}
+                    <span>
+                      {guess.Damage ? guess.Damage : "N/A"}
+                    </span>
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
-                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Pierce"]}
+                    {guess.Pierce ? guess.Pierce : "N/A"}
                   </li>
                   <li className="flex items-center justify-center text-center h-10 md:h-auto mx-auto w-12 md:w-16">
-                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Attack Speed"]}
+                    {guess["Attack Speed"] ? guess["Attack Speed"] : "N/A"}
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
-                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Range"]}
+                    {guess.Range ? guess.Range : "N/A"}
                   </li>
                   <li className="flex items-center justify-center text-center h-10 w-12 mx-auto md:h-auto md:w-20">
-                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Camo Detection"].toString()}
+                    <span className={guess["Camo Detection"] === answerData?.["Camo Detection"] ? "text-green-500" : "text-red-600"}>
+                      {guess["Camo Detection"].toString()}
+                    </span>
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-20">
-                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Footprint"]}
+                    <span className={guess.Footprint === answerData?.Footprint ? "text-green-500" : "text-red-600"}>
+                      {guess.Footprint}
+                    </span>
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
-                    {allTowers[guess.towerName!][`${guess.topPath}-${guess.middlePath}-${guess.bottomPath}`]["Damage Type"]}
+                    <span className={guess["Damage Type"] === answerData?.["Damage Type"] ? "text-green-500" : "text-red-600"}>
+                      {guess["Damage Type"]}
+                    </span>
                   </li>
                 </ul>
               ))}
