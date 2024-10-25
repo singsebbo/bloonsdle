@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import CheckSVG from "../assets/check-svg";
 import towers from "../data/towers.json";
 import ArrowSVG from "../assets/arrow-svg";
-import { loadTowerImages } from "../utils";
+import { loadTowerImages, compareStats } from "../utils";
 import { Challenge, ChallengeResponse, Input, Tower, Towers } from "../interfaces";
 import Throbber from "../elements/throbber";
 import Reset from "../elements/reset";
@@ -203,7 +203,7 @@ function Game(): JSX.Element {
           {guesses.length === 0 ?
             <span>{numSolved} have found out the daily tower!</span>
             :
-            <div className="flex ml-4 self-start md:self-center md:flex-col">
+            <div className="flex grow mx-4 self-start md:self-center md:flex-col">
               <ul
                 className="
                   flex self-start md:ml-0 md:self-center flex-col md:flex-row font-mono text-xs border-2 p-2 border-slate-600
@@ -229,7 +229,7 @@ function Game(): JSX.Element {
                     rounded-md md:mt-4 
                   "
                 >
-                  <li className="flex items-center justify-center text-center h-14 md:h-auto md:w-14">
+                  <li className="flex items-center justify-center text-center md:h-auto md:w-14">
                     <img 
                       src={towerImages[guess.Image]} alt={`${guess.Crosspath} ${guess.Name}`}
                       className="h-14"
@@ -246,7 +246,7 @@ function Game(): JSX.Element {
                     <span className={guess.Cost[difficulty] === answerData?.Cost[difficulty] ? "text-green-500" : "text-red-600"}>
                       {guess.Cost[difficulty]}
                     </span>
-                    {guess.Cost != answerData!.Cost ?
+                    {guess.Cost[difficulty] != answerData!.Cost[difficulty] ?
                       <span className={guess.Cost[difficulty] > answerData!.Cost[difficulty] ? "rotate-180" : ""}>
                         <ArrowSVG />
                       </span>
@@ -255,18 +255,84 @@ function Game(): JSX.Element {
                     }
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
-                    <span>
+                    <span className={
+                      compareStats(guess.Damage, answerData!.Damage) === 3 ? "text-green-500":
+                      compareStats(guess.Damage, answerData!.Damage) === 2 ? "text-yellow-400" :
+                      "text-red-600"}
+                    >
                       {guess.Damage ? guess.Damage : "N/A"}
                     </span>
+                    {compareStats(guess.Damage, answerData!.Damage) >= 2 ?
+                      <></>
+                      : compareStats(guess.Damage, answerData!.Damage) === 1 ? 
+                        <span className="rotate-180">
+                          <ArrowSVG />
+                        </span>
+                        :
+                        <span>
+                          <ArrowSVG />
+                        </span>
+                    }
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
-                    {guess.Pierce ? guess.Pierce : "N/A"}
+                  <span className={
+                      compareStats(guess.Pierce, answerData!.Pierce) === 3 ? "text-green-500":
+                      compareStats(guess.Pierce, answerData!.Pierce) === 2 ? "text-yellow-400" :
+                      "text-red-600"}
+                    >
+                      {guess.Pierce ? guess.Pierce : "N/A"}
+                    </span>
+                    {compareStats(guess.Pierce, answerData!.Pierce) >= 2 ?
+                      <></>
+                      : compareStats(guess.Pierce, answerData!.Pierce) === 1 ? 
+                        <span className="rotate-180">
+                          <ArrowSVG />
+                        </span>
+                        :
+                        <span>
+                          <ArrowSVG />
+                        </span>
+                    }
                   </li>
                   <li className="flex items-center justify-center text-center h-10 md:h-auto mx-auto w-12 md:w-16">
-                    {guess["Attack Speed"] ? guess["Attack Speed"] : "N/A"}
+                  <span className={
+                      compareStats(guess["Attack Speed"], answerData!["Attack Speed"]) === 3 ? "text-green-500":
+                      compareStats(guess["Attack Speed"], answerData!["Attack Speed"]) === 2 ? "text-yellow-400" :
+                      "text-red-600"}
+                    >
+                      {guess["Attack Speed"] ? guess["Attack Speed"] : "N/A"}
+                    </span>
+                    {compareStats(guess["Attack Speed"], answerData!["Attack Speed"]) >= 2 ?
+                      <></>
+                      : compareStats(guess["Attack Speed"], answerData!["Attack Speed"]) === 1 ? 
+                        <span className="rotate-180">
+                          <ArrowSVG />
+                        </span>
+                        :
+                        <span>
+                          <ArrowSVG />
+                        </span>
+                    }
                   </li>
                   <li className="flex items-center justify-center text-center h-6 md:h-auto md:w-16">
-                    {guess.Range ? guess.Range : "N/A"}
+                  <span className={
+                      compareStats(guess.Range, answerData!.Range) === 3 ? "text-green-500":
+                      compareStats(guess.Range, answerData!.Range) === 2 ? "text-yellow-400" :
+                      "text-red-600"}
+                    >
+                      {guess.Range ? guess.Range : "N/A"}
+                    </span>
+                    {compareStats(guess.Range, answerData!.Range) >= 2 ?
+                      <></>
+                      : compareStats(guess.Range, answerData!.Range) === 1 ? 
+                        <span className="rotate-180">
+                          <ArrowSVG />
+                        </span>
+                        :
+                        <span>
+                          <ArrowSVG />
+                        </span>
+                    }
                   </li>
                   <li className="flex items-center justify-center text-center h-10 w-12 mx-auto md:h-auto md:w-20">
                     <span className={guess["Camo Detection"] === answerData?.["Camo Detection"] ? "text-green-500" : "text-red-600"}>
