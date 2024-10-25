@@ -126,6 +126,7 @@ function Game(): JSX.Element {
                   type="text"
                   name="towerName"
                   placeholder="tower"
+                  autoComplete="off"
                   value={input.textBox === null ? "" : input.textBox}
                   onChange={handleTextChange}
                   className="font-mono w-56 h-16 px-4 border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
