@@ -43,6 +43,33 @@ class DatabaseModel {
       throw new Error("Error while creating next daily challenge");
     }
   }
+
+  static async checkChallenge(
+    currentDate: string,
+    baseTower: string,
+    crosspath: string
+  ): Promise<number> {
+    try {
+      const query = `
+        UPDATE solution
+        SET num_solved = num_solved + 1
+        WHERE challenge_date = CURRENT_DATE
+          AND challenge_date = $1
+          AND base_tower = $2
+          AND crosspath = $3
+        RETURNING num_solved
+      `;
+      const values: string[] = [currentDate, baseTower, crosspath];
+      const result = await pool.query(query, values);
+      if (result.rows.length === 0) {
+        throw new Error("No challenge with those parameters found");
+      }
+      return result.rows[0].num_solved;
+    } catch (err: unknown) {
+      console.error(err);
+      throw new Error("Error while checking daily challenge answer");
+    }
+  }
 }
 
 export default DatabaseModel;

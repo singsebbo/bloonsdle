@@ -10,6 +10,7 @@ const corsOptions: { origin: string } = {
   origin: "http://localhost:5173",
 };
 app.use(cors());
+app.use(express.json());
 
 // Mounts our routes
 app.use("/api", routes);
