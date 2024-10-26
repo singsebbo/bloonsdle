@@ -3,7 +3,7 @@ import CheckSVG from "../assets/check-svg";
 import towers from "../data/towers.json";
 import ArrowSVG from "../assets/arrow-svg";
 import { loadTowerImages, compareStats } from "../utils";
-import { Challenge, ChallengeResponse, Input, Tower, Towers } from "../interfaces";
+import { Challenge, ChallengeResponse, Input, Tower, Towers, UpdateResponse } from "../interfaces";
 import Throbber from "../elements/throbber";
 import Reset from "../elements/reset";
 import { getTower } from "../utils";
@@ -12,6 +12,7 @@ function Game(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
   const [numSolved, setNumSolved] = useState<number | null>(null);
   const [answerData, setAnswerData] = useState<Tower | null>(null);
+  const [solved, setSolved] = useState<boolean>(false);
   // Used for the price of towers: Easy = 0, Medium = 1, Hard = 2, and Impoppable = 3
   const [difficulty, setDifficulty] = useState<number>(2);
   const [input, setInput] = useState<Input>({
@@ -33,6 +34,7 @@ function Game(): JSX.Element {
     }
   }
   const [guesses, setGuesses] = useState<Tower[]>([]);
+  const [solveNum, setSolveNum] = useState<number>();
 
   async function getDailyChallenge(): Promise<void> {
     try {
@@ -43,12 +45,30 @@ function Game(): JSX.Element {
       const data: ChallengeResponse = await response.json();
       const challenge: Challenge = data.challenge;
       const tower: Tower = getTower(challenge.baseTower, challenge.crosspath, allTowers);
+      const challengeDate: string | null = localStorage.getItem("challenge-date");
+      if (challengeDate && challengeDate === challenge.date) {
+        loadLocalStorage();
+      } else {
+        localStorage.setItem("challenge-date", challenge.date);
+        localStorage.removeItem("guesses");
+      }
       setNumSolved(challenge.numSolved);
       setAnswerData(tower);
     } catch (err: unknown) {
       console.error("Error while getting daily challenge", err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  function loadLocalStorage(): void {
+    const guesses: string | null = localStorage.getItem("guesses");
+    if (guesses) {
+      setGuesses(JSON.parse(guesses));
+      const solved: string | null = localStorage.getItem("solved");
+      if (solved && solved === "true") {
+        setSolved(true);
+      }
     }
   }
 
@@ -105,106 +125,155 @@ function Game(): JSX.Element {
     setSuggestions([]);
   }
 
-  function handleSubmit(): void {
+  async function handleSubmit(): Promise<void> {
     if (selectedTower === null) return;
     setGuesses((prevGuesses) => {
-      return [...prevGuesses, selectedTower];
+      const newGuesses: Tower[] = [...prevGuesses, selectedTower];
+      localStorage.setItem("guesses", JSON.stringify(newGuesses))
+      return newGuesses;
     });
     setSelectedTower(null);
+    if (selectedTower["Base Tower"] === answerData?.["Base Tower"] && selectedTower.Crosspath === answerData!.Crosspath) {
+      try {
+        setLoading(true);
+        setSolved(true);
+        localStorage.setItem("solved", "true");
+        const response: Response = await fetch("http://localhost:3000/api/updateSolved", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            date: localStorage.getItem("challenge-date"),
+            baseTower: selectedTower["Base Tower"],
+            crosspath: selectedTower.Crosspath,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Error while fetching new solve count");
+        }
+        const data: UpdateResponse = await response.json();
+        const numSolved: number = data["num-solved"];
+        setSolveNum(numSolved);
+      } catch (err: unknown) {
+        console.error("Error while submitting guess", err);
+      } finally {
+        setLoading(false);
+      }
+    }
   }
 
   return (
     <>
-      <main className="flex flex-col grow mt-10 relative">
+      <main className="flex flex-col grow mt-6 md:mt-10 relative">
         {loading && <Throbber />}
         <div className="flex flex-col grow gap-2 items-center">
-          <div className="flex items-center gap-2">
-            <Reset handleReset={handleReset} />
-            <div className="relative">
-              {selectedTower === null ?
-                <input
-                  type="text"
-                  name="towerName"
-                  placeholder="tower"
-                  autoComplete="off"
-                  value={input.textBox === null ? "" : input.textBox}
-                  onChange={handleTextChange}
-                  className="font-mono w-56 h-16 px-4 border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
-                />
-                :
-                <div
-                  className="flex w-56 h-16 px-4 items-center h-16 gap-4 border-2 border-slate-600"
-                >
-                  <img
-                    src={towerImages[selectedTower.Image]}
-                    alt={selectedTower.Name}
-                    className="w-10"
+          {solved ?
+            <div className="flex flex-col max-w-72 md:max-w-full items-center font-mono gap-2 border-2 py-2 px-10 rounded-md border-slate-600">
+              <span className="font-semibold text-2xl">Congrats</span>
+              <img 
+                src={towerImages[answerData!.Image]}
+                alt={`${answerData!.Crosspath} ${answerData!["Base Tower"]}`}
+                className="w-14 md:w-24"
+              />
+              <span>{`${answerData!.Crosspath} ${answerData!["Base Tower"]}`}</span>
+              <span>You were person number {solveNum} to get the daily challenge</span>
+            </div>
+            :
+            <div className="flex items-center gap-2">
+              <Reset handleReset={handleReset} />
+              <div className="relative">
+                {selectedTower === null ?
+                  <input
+                    type="text"
+                    name="towerName"
+                    placeholder="tower"
+                    autoComplete="off"
+                    value={input.textBox === null ? "" : input.textBox}
+                    onChange={handleTextChange}
+                    className="font-mono w-56 h-16 px-4 border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
                   />
-                  <span className="font-mono">{selectedTower.Name}</span>
-                </div>
-              }
-              {suggestions.length !== 0 ?
-                <ul className="absolute top-full w-56 max-h-80 overflow-y-auto border-2 border-t-0 border-slate-600 z-20">
-                  {suggestions.map((suggestion, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center h-16 gap-4 p-2 bg-white cursor-pointer hover:bg-gray-100"
-                      onClick={() => handleSuggestionClick(suggestion)}
-                    >
-                      <img
-                        src={towerImages[suggestion.Image]}
-                        alt={suggestion.Name}
-                        className="w-10"
-                      />
-                      <span className="font-mono">{suggestion.Name}</span>
-                    </li>
-                  ))}
-                </ul>
-                :
-                <></>
-              }
+                  :
+                  <div
+                    className="flex w-56 h-16 px-4 items-center h-16 gap-4 border-2 border-slate-600"
+                  >
+                    <img
+                      src={towerImages[selectedTower.Image]}
+                      alt={selectedTower.Name}
+                      className="w-10"
+                    />
+                    <span className="font-mono">{selectedTower.Name}</span>
+                  </div>
+                }
+                {suggestions.length !== 0 ?
+                  <ul className="absolute top-full w-56 max-h-80 overflow-y-auto border-2 border-t-0 border-slate-600 z-20">
+                    {suggestions.map((suggestion, index) => (
+                      <li
+                        key={index}
+                        className="flex items-center h-16 gap-4 p-2 bg-white cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                      >
+                        <img
+                          src={towerImages[suggestion.Image]}
+                          alt={suggestion.Name}
+                          className="w-10"
+                        />
+                        <span className="font-mono">{suggestion.Name}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  :
+                  <></>
+                }
+              </div>
+              <div
+                className="cursor-pointer"
+                onClick={handleSubmit}
+              >
+                <CheckSVG />
+              </div>
             </div>
-            <div
-              className="cursor-pointer"
-              onClick={handleSubmit}
-            >
-              <CheckSVG />
-            </div>
-          </div>
-          <span className="font-mono">Path</span>
-          <div className="flex gap-2" id="crosspaths">
-            <select
-              name="topPath"
-              value={input.topPath === null ? "" : input.topPath}
-              onChange={handleSelectionChange}
-              className="font-mono rounded-md border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
-            >
-              <option value="" disabled selected>-</option>
-              <option value={0}>0</option>
-            </select>
-            <select
-              name="middlePath"
-              value={input.middlePath === null ? "" : input.middlePath}
-              onChange={handleSelectionChange}
-              className="font-mono rounded-md border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
-            >
-              <option value="" disabled selected>-</option>
-              <option value={0}>0</option>
-            </select>
-            <select
-              name="bottomPath"
-              value={input.bottomPath === null ? "" : input.bottomPath}
-              onChange={handleSelectionChange}
-              className="font-mono rounded-md border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
-            >
-              <option value="" disabled selected>-</option>
-              <option value={0}>0</option>
-            </select>
-          </div>
+          }
+          {solved ?
+            <></>
+            :
+            <>
+              <span className="font-mono">Path</span>
+              <div className="flex gap-2" id="crosspaths">
+                <select
+                  name="topPath"
+                  value={input.topPath === null ? "" : input.topPath}
+                  onChange={handleSelectionChange}
+                  className="font-mono rounded-md border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
+                >
+                  <option value="" disabled selected>-</option>
+                  <option value={0}>0</option>
+                </select>
+                <select
+                  name="middlePath"
+                  value={input.middlePath === null ? "" : input.middlePath}
+                  onChange={handleSelectionChange}
+                  className="font-mono rounded-md border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
+                >
+                  <option value="" disabled selected>-</option>
+                  <option value={0}>0</option>
+                </select>
+                <select
+                  name="bottomPath"
+                  value={input.bottomPath === null ? "" : input.bottomPath}
+                  onChange={handleSelectionChange}
+                  className="font-mono rounded-md border-2 border-slate-600 focus:border-slate-600 focus:outline-none"
+                >
+                  <option value="" disabled selected>-</option>
+                  <option value={0}>0</option>
+                </select>
+              </div>
+            </>
+          }
           {guesses.length === 0 ?
             <span>{numSolved} have found out the daily tower!</span>
             :
-            <div className="flex grow mx-4 self-start md:self-center md:flex-col">
+            <div className="flex grow px-4 self-center max-w-full overflow-x-auto md:self-center md:flex-col">
               <ul
                 className="
                   flex self-start md:ml-0 md:self-center flex-col md:flex-row font-mono text-xs border-2 p-2 border-slate-600

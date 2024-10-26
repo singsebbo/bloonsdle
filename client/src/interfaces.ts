@@ -48,3 +48,8 @@ export interface ChallengeResponse {
   message: string;
   challenge: Challenge;
 }
+
+export interface UpdateResponse {
+  "num-solved": number;
+  message: string;
+}
