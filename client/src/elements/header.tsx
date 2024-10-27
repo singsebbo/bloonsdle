@@ -13,8 +13,11 @@ function Header(): JSX.Element {
           <img src={dartMonkeyImage} alt="0-0-0 Dart Monkey" className="w-10 md:w-16"/>
           <h1 className="font-mono text-4xl md:text-6xl">bloonsdle</h1>
         </div>
-        <span className="flex basis-0 grow justify-end mr-2 sm:mr-4 md:mr-6 items-center">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-6 md:h-10">
+        <span
+          className="flex basis-0 grow justify-end mr-2 sm:mr-4 md:mr-6 items-center">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" 
+            className="h-6 transition ease-in-out delay-50 cursor-pointer hover:scale-125 md:h-10"
+          >
             <path d="M10.5213 3.62368C11.3147 2.75255 12.6853 2.75255 13.4787 3.62368L14.2142 4.43128C14.6151 4.87154 15.1914 5.11025 15.7862
               5.08245L16.8774 5.03146C18.0543 4.97645 19.0236 5.94568 18.9685 7.12264L18.9176 8.21377C18.8898 8.80859 19.1285 9.38487 19.5687
               9.78582L20.3763 10.5213C21.2475 11.3147 21.2475 12.6853 20.3763 13.4787L19.5687 14.2142C19.1285 14.6151 18.8898 15.1914 18.9176
