@@ -5,7 +5,7 @@ import Header from "./elements/header"
 function App(): JSX.Element {
   return (
     <>
-      <div className="flex flex-col min-h-screen max-h-fit overflow-y-hidden">
+      <div className="mx-auto flex flex-col min-h-screen max-h-fit overflow-y-hidden max-w-screen-lg">
         <Header />
         <Game />
         <Footer />

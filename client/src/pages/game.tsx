@@ -68,6 +68,10 @@ function Game(): JSX.Element {
       const solved: string | null = localStorage.getItem("solved");
       if (solved && solved === "true") {
         setSolved(true);
+        const numSolved: string | null = localStorage.getItem("num-solved");
+        if (numSolved) {
+          setSolveNum(Number(numSolved));
+        }
       }
     }
   }
@@ -154,6 +158,7 @@ function Game(): JSX.Element {
         }
         const data: UpdateResponse = await response.json();
         const numSolved: number = data["num-solved"];
+        localStorage.setItem("num-solved", numSolved.toString());
         setSolveNum(numSolved);
       } catch (err: unknown) {
         console.error("Error while submitting guess", err);
