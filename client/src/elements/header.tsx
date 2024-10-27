@@ -1,6 +1,10 @@
 import dartMonkeyImage from "../assets/towerImages/dart-monkey.png";
 
-function Header(): JSX.Element {
+interface HeaderProps {
+  setSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function Header({setSettingsOpen}: HeaderProps): JSX.Element {
   return (
     <>
       <div className="flex content-between mt-4 min-w-fit">
@@ -17,6 +21,7 @@ function Header(): JSX.Element {
           className="flex basis-0 grow justify-end mr-2 sm:mr-4 md:mr-6 items-center">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" 
             className="h-6 transition ease-in-out delay-50 cursor-pointer hover:scale-125 md:h-10"
+            onClick={() => setSettingsOpen(true)}
           >
             <path d="M10.5213 3.62368C11.3147 2.75255 12.6853 2.75255 13.4787 3.62368L14.2142 4.43128C14.6151 4.87154 15.1914 5.11025 15.7862
               5.08245L16.8774 5.03146C18.0543 4.97645 19.0236 5.94568 18.9685 7.12264L18.9176 8.21377C18.8898 8.80859 19.1285 9.38487 19.5687

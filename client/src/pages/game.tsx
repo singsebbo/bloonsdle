@@ -7,8 +7,14 @@ import { Challenge, ChallengeResponse, Input, Tower, Towers, UpdateResponse } fr
 import Throbber from "../elements/throbber";
 import Reset from "../elements/reset";
 import { getTower } from "../utils";
+import SettingsCard from "../elements/settings";
 
-function Game(): JSX.Element {
+interface GameProps {
+  settingsOpen: boolean;
+  setSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function Game({settingsOpen, setSettingsOpen}: GameProps): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
   const [numSolved, setNumSolved] = useState<number | null>(null);
   const [answerData, setAnswerData] = useState<Tower | null>(null);
@@ -51,6 +57,8 @@ function Game(): JSX.Element {
       } else {
         localStorage.setItem("challenge-date", challenge.date);
         localStorage.removeItem("guesses");
+        localStorage.removeItem("num-solved");
+        localStorage.removeItem("solved");
       }
       setNumSolved(challenge.numSolved);
       setAnswerData(tower);
@@ -77,6 +85,10 @@ function Game(): JSX.Element {
   }
 
   useEffect((): void => {
+    const localDiff: string | null = localStorage.getItem("difficulty");
+    if (localDiff) {
+      setDifficulty(Number(localDiff));
+    }
     getDailyChallenge();
     async function fetchImages(): Promise<void> {
       const images = await loadTowerImages();
@@ -172,6 +184,9 @@ function Game(): JSX.Element {
     <>
       <main className="flex flex-col grow mt-6 md:mt-10 relative">
         {loading && <Throbber />}
+        {settingsOpen &&
+          <SettingsCard isOpen={settingsOpen} setSettingsOpen={setSettingsOpen} difficulty={difficulty} setDifficulty={setDifficulty}/>
+        }
         <div className="flex flex-col grow gap-2 items-center">
           {solved ?
             <div className="flex flex-col max-w-72 md:max-w-full items-center font-mono gap-2 border-2 py-2 px-10 rounded-md border-slate-600">
