@@ -7,7 +7,7 @@ function Header(): JSX.Element {
         <span className="basis-0 grow ml-2 sm:ml-4 md:ml-6"></span>
         <div
           className="
-            flex min-w-fit items-center transition ease-in-out delay-50 cursor-pointer hover:scale-110 hover:translate-y-1
+            flex min-w-fit items-center transition ease-in-out delay-50 cursor-pointer hover:scale-110
           "
         >
           <img src={dartMonkeyImage} alt="0-0-0 Dart Monkey" className="w-10 md:w-16"/>
