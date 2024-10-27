@@ -9,6 +9,8 @@ import Reset from "../elements/reset";
 import { getTower } from "../utils";
 import SettingsCard from "../elements/settings";
 
+const apiUrl = import.meta.env.VITE_EXPRESS_SERVER_URL;
+
 interface GameProps {
   settingsOpen: boolean;
   setSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,7 +46,7 @@ function Game({settingsOpen, setSettingsOpen}: GameProps): JSX.Element {
 
   async function getDailyChallenge(): Promise<void> {
     try {
-      const response: Response = await fetch("http://localhost:3000/api/daily");
+      const response: Response = await fetch(`${apiUrl}/daily`);
       if (!response.ok) {
         throw new Error(`HTTP error with status: ${response.status}`);
       }
@@ -154,7 +156,7 @@ function Game({settingsOpen, setSettingsOpen}: GameProps): JSX.Element {
         setLoading(true);
         setSolved(true);
         localStorage.setItem("solved", "true");
-        const response: Response = await fetch("http://localhost:3000/api/updateSolved", {
+        const response: Response = await fetch(`${apiUrl}/updateSolved`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
